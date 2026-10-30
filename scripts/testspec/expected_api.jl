@@ -18,7 +18,7 @@ else
     using DuckDB_jll
 end
 
-DUCKDB_API_VERSION = v"1.2.0"
+DUCKDB_API_VERSION = v"1.5.4"
 
 
 # --------------------------------------------------------------------------------

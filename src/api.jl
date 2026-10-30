@@ -18,7 +18,7 @@ else
     using DuckDB_jll
 end
 
-DUCKDB_API_VERSION = v"1.5.4"
+DUCKDB_API_VERSION = v"1.5.6"
 
 
 # --------------------------------------------------------------------------------
@@ -509,8 +509,9 @@ end
 """
     duckdb_appender_flush(appender)
 
-Flush the appender to the table, forcing the cache of the appender to be cleared. If flushing the data triggers a
-constraint violation or any other error, then all data is invalidated, and this function returns DuckDBError.
+Flush the appender to the table, forcing the cache of the appender to be cleared. Requires a connection with no open
+result. If flushing the data triggers a constraint violation or any other error, then all data is invalidated, and
+this function returns DuckDBError.
 It is not possible to append more values. Call duckdb_appender_error_data to obtain the error data followed by
 duckdb_appender_destroy to destroy the invalidated appender.
 
@@ -4739,6 +4740,15 @@ end
 
 Closes the pending result and de-allocates all memory allocated for the result.
 
+Destroying a pending result whose statement has not completed aborts the statement. On autocommit, its writes
+are rolled back. Inside a transaction, a statement that may write invalidates the transaction, and a read-only
+statement just stops. Until the statement has completed, preparing or running another statement on the
+connection fails with `DUCKDB_ERROR_RESOURCE_IN_USE` and leaves it untouched.
+`duckdb_pending_execution_is_finished` reporting true does not mean that the statement completed. To make sure
+a statement takes effect, complete it before destroying the pending result: call `duckdb_execute_pending`, and
+fetch a streaming result until `duckdb_fetch_chunk` returns NULL. A NULL chunk is also returned on an error, so
+check `duckdb_result_error` afterwards.
+
 # Arguments
 - `pending_result`: `Ref{duckdb_pending_result}` The pending result to destroy.
 
@@ -5936,6 +5946,13 @@ end
     duckdb_destroy_result(result)
 
 Closes the result and de-allocates all memory allocated for that result.
+
+Destroying a streaming result whose statement has not completed aborts the statement. On autocommit, its writes
+are rolled back. Inside a transaction, a statement that may write invalidates the transaction, and a read-only
+statement just stops. Until the statement has completed, preparing or running another statement on the
+connection fails with `DUCKDB_ERROR_RESOURCE_IN_USE` and leaves it untouched. To make sure the statement takes
+effect, complete it by fetching until `duckdb_fetch_chunk` returns NULL before destroying the result. A NULL
+chunk is also returned on an error, so check `duckdb_result_error` afterwards.
 
 # Arguments
 - `result`: `Ref{duckdb_result}` The result to destroy.

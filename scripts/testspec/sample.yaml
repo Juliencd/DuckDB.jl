@@ -2,7 +2,7 @@ module: sample
 handles:
   thing:
     lifecycle:
-      - ["frozen", "v1.5.4", "2026-05-18"]
+      - ["frozen", "v1.4.0", "2025-01-01"]
     description: "A sample handle. Must be destroyed with duckdb_destroy_thing."
 callbacks:
   thing_delete_t:

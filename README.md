@@ -145,7 +145,7 @@ The spec lives in the [DuckDB repository](https://github.com/duckdb/duckdb) unde
 By default it fetches `api_spec` from `duckdb/duckdb`. Override the source with `SPEC_REF` (a tag or branch) and `SPEC_REPO`, or set `SPEC_DIR` to a local `api_spec/v1` checkout to skip fetching:
 
 ```bash
-SPEC_REF=v1.5.4 ./update_api.sh                 # pin a DuckDB version
+SPEC_REF=v2.0.0 ./update_api.sh                 # pin a DuckDB version
 SPEC_DIR=/path/to/api_spec/v1 ./update_api.sh   # use a local checkout
 ```
 
